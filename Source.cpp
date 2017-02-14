@@ -25,19 +25,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				HANDLE hPrinter;
 				if (OpenPrinter(szDefaultPrinter, &hPrinter, 0) != 0)
 				{
-					const DWORD dwLevel = 2;
-					DWORD dwNeeded;
-					GetPrinter(hPrinter, dwLevel, 0, 0, &dwNeeded);
-					LPBYTE pPrinter = (LPBYTE)LocalAlloc(LPTR, dwNeeded);
-					if (GetPrinter(hPrinter, dwLevel, pPrinter, dwNeeded, &dwNeeded) != 0)
 					{
-						PRINTER_INFO_2W *pInfo = (PRINTER_INFO_2W *)pPrinter;
-						TCHAR szText[1024];
-						wsprintf(szText, TEXT("プリンター名: %s\n\n状態: %s"), szDefaultPrinter, (pInfo->Status & PRINTER_ATTRIBUTE_WORK_OFFLINE) ? TEXT("オフライン") : TEXT("オンライン"));
-						LocalFree(pPrinter);
-						ClosePrinter(hPrinter);
-						MessageBox(hWnd, szText, 0, 0);
+						const DWORD dwLevel = 2;
+						DWORD dwNeeded;
+						GetPrinter(hPrinter, dwLevel, 0, 0, &dwNeeded);
+						LPBYTE pPrinter = (LPBYTE)LocalAlloc(LPTR, dwNeeded);
+						if (GetPrinter(hPrinter, dwLevel, pPrinter, dwNeeded, &dwNeeded) != 0)
+						{
+							PRINTER_INFO_2 *pInfo = (PRINTER_INFO_2 *)pPrinter;
+							TCHAR szText[1024];
+							wsprintf(szText, TEXT("プリンター名: %s\n\n状態: %s"), szDefaultPrinter, (pInfo->Status & PRINTER_ATTRIBUTE_WORK_OFFLINE) ? TEXT("オフライン") : TEXT("オンライン"));
+							LocalFree(pPrinter);
+							MessageBox(hWnd, szText, TEXT("PRINTER_INFO_2"), 0);
+						}
 					}
+					{
+						const DWORD dwLevel = 6;
+						DWORD dwNeeded;
+						GetPrinter(hPrinter, dwLevel, 0, 0, &dwNeeded);
+						LPBYTE pPrinter = (LPBYTE)LocalAlloc(LPTR, dwNeeded);
+						if (GetPrinter(hPrinter, dwLevel, pPrinter, dwNeeded, &dwNeeded) != 0)
+						{
+							PRINTER_INFO_6 *pInfo = (PRINTER_INFO_6 *)pPrinter;
+							TCHAR szText[1024];
+							wsprintf(szText, TEXT("プリンター名: %s\n\n状態: %s"), szDefaultPrinter, (pInfo->dwStatus & PRINTER_STATUS_OFFLINE) ? TEXT("オフライン") : TEXT("オンライン"));
+							LocalFree(pPrinter);
+							MessageBox(hWnd, szText, TEXT("PRINTER_INFO_6"), 0);
+						}
+					}
+					ClosePrinter(hPrinter);
 				}
 			}
 		}
